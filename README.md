@@ -41,13 +41,13 @@ Put bin/ in environment PATH to use in terminal. [Add folder to PATH tutorial](h
 ### Linux
 ```bash
 sudo apt update
-sudo apt install openjdk-17-jdk -y
+sudo apt install openjdk-21-jdk -y
 sudo apt install maven -y
 ```
 
 ### MacOS
 ```bash
-brew install openjdk@17
+brew install openjdk@21
 brew install maven
 ```
 
