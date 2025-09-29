@@ -1,15 +1,21 @@
-// package algeo;
+package algeo;
 
-// import algeo.modules.ModuleContoh;
+import algeo.core.Matrix;
+import algeo.io.MatrixIO;
 
-// public class App {
-//   public static void main(String[] args) {
-//     ModuleContoh m = new ModuleContoh();
+public class App {
+  public static void main(String[] args) {
+    System.out.println("Hai");
+    menu();
+  }
 
-//     System.out.println("Hai");
-//     m.halo();
-//   }
-// }
+  public static void menu() {
+    System.out.println("Selamat datang di Kalkulator keren!");
+    Matrix namaMatrix = MatrixIO.inputMatrix();
+    System.out.println("Matriks yang Anda masukkan adalah:");
+    System.out.println(namaMatrix);
+  }
+}
 
 // ====== MAIN GUI EXAMPLE ======
 // Be sure to uncoment the section below and follow the steps written in README
@@ -36,4 +42,3 @@
 //         launch(args);
 //     }
 // }
-
