@@ -11,13 +11,15 @@ public class Gauss {
   }
 
   public static void finishSPL(Matrix M) {
-    int n = M.cols() - 1;
+    int n = M.cols() - 1; // Jumlah variabel (kolom - 1)
     double[] solution = new double[n];
 
+    // Perulangan mundur dari baris terakhir hingga baris pertama
     for (int i = n - 1; i >= 0; i--) {
       // Nilai dari sisi kanan persamaan
       double rhs = M.get(i, n);
 
+      // Logika untuk menampilkan persamaan
       StringBuilder equation = new StringBuilder();
       for (int j = 0; j < n; j++) {
         double coef = M.get(i, j);
@@ -27,7 +29,7 @@ public class Gauss {
           } else if (coef < 0) {
             equation.append(" - ");
           }
-          if (Math.abs(coef) != 1 || j == n - 1) {
+          if (Math.abs(coef) != 1 || j == n - 1) { // Jangan cetak "1x"
             equation.append(Math.abs(coef));
           }
           equation.append("x").append(j + 1);
@@ -36,6 +38,7 @@ public class Gauss {
       equation.append(" = ").append(rhs);
       System.out.println("Persamaan: " + equation.toString());
 
+      // Substitusi balik untuk mendapatkan solusi
       double sum = 0;
       for (int j = i + 1; j < n; j++) {
         sum += M.get(i, j) * solution[j];

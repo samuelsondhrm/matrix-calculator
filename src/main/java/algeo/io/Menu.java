@@ -39,7 +39,7 @@ public class Menu {
         menu = globalScanner.nextInt();
       } catch (Exception e) {
         System.out.println("Input tidak valid. Silakan masukkan angka.");
-        globalScanner.nextLine(); // Clear the invalid input
+        globalScanner.nextLine();
         continue;
       }
 
@@ -89,17 +89,19 @@ public class Menu {
         menu = globalScanner.nextInt();
       } catch (Exception e) {
         System.out.println("Input tidak valid. Silakan masukkan angka.");
-        globalScanner.nextLine(); // Clear the invalid input
+        globalScanner.nextLine();
         continue;
       }
 
       if (menu == 1) {
         Gauss.gauss();
         menu = -1;
+        waitForEnter();
 
       } else if (menu == 2) {
-        Gauss.gaussjordan();
+        GaussJordan.gaussjordan();
         menu = -1;
+        waitForEnter();
 
       } else if (menu == 5) {
         System.out.println("Kembali ke menu utama...");
@@ -118,6 +120,12 @@ public class Menu {
   public static void interpolasiIO() {}
 
   public static void regresiIO() {}
+
+  public static void waitForEnter() {
+    System.out.println("Tekan ENTER untuk melanjutkan program");
+    globalScanner.nextLine();
+        globalScanner.nextLine();
+  }
 
   public static void cleanup() {
     if (globalScanner != null) {
