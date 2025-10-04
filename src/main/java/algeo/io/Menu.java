@@ -4,7 +4,6 @@ import algeo.spl.*;
 import java.util.Scanner;
 
 public class Menu {
-  // Global scanner untuk menghindari multiple instances
   private static Scanner globalScanner = new Scanner(System.in);
 
   public static void menu() {
@@ -103,6 +102,11 @@ public class Menu {
         menu = -1;
         waitForEnter();
 
+      } else if (menu == 3) {
+        Cramer.cramer();
+        menu = -1;
+        waitForEnter();
+
       } else if (menu == 5) {
         System.out.println("Kembali ke menu utama...");
         break;
@@ -124,7 +128,7 @@ public class Menu {
   public static void waitForEnter() {
     System.out.println("Tekan ENTER untuk melanjutkan program");
     globalScanner.nextLine();
-        globalScanner.nextLine();
+    globalScanner.nextLine();
   }
 
   public static void cleanup() {
