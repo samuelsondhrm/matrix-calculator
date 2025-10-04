@@ -162,6 +162,11 @@ public class Matrix {
     a[r2] = tmp;
   }
 
+    public void swapCols(int c1, int c2) {
+        swapRows(c1, c2);
+        transpose();
+    }
+
   /** Skala baris r dengan faktor k. */
   public void scaleRow(int r, double k) {
     checkRow(r);
