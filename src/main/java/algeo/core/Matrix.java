@@ -162,10 +162,17 @@ public class Matrix {
     a[r2] = tmp;
   }
 
-    public void swapCols(int c1, int c2) {
-        swapRows(c1, c2);
-        transpose();
+  public void swapCols(int c1, int c2) {
+    if (c1 == c2) return;
+    checkCol(c1);
+    checkCol(c2);
+
+    for (int i = 0; i < this.rows; i++) {
+      double temp = this.a[i][c1];
+      this.a[i][c1] = this.a[i][c2];
+      this.a[i][c2] = temp;
     }
+  }
 
   /** Skala baris r dengan faktor k. */
   public void scaleRow(int r, double k) {
