@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class MatrixIO {
   // Scanner global untuk konsistensi dengan Menu
   private static Scanner scanner = new Scanner(System.in);
-  
+
   public static Matrix inputMatrix() {
 
     System.out.print("Masukkan jumlah baris: ");
@@ -20,18 +20,31 @@ public class MatrixIO {
 
     double[][] doublearrayIn = new double[rows][cols];
 
-    System.out.println("Masukkan elemen matriks:");
+    System.out.println(
+        "Masukkan elemen matriks (dipisahkan spasi dan tekan ENTER setiap barisnya):");
+
+    scanner.nextLine();
+
     for (int i = 0; i < rows; i++) {
+      String line = scanner.nextLine();
+      String[] tokens = line.trim().split("\\s+");
+      if (tokens.length != cols) {
+        System.out.println("Jumlah elemen tidak sesuai dengan jumlah kolom. Silakan coba lagi.");
+        i--;
+        continue;
+      }
       for (int j = 0; j < cols; j++) {
-        System.out.printf("Elemen [%d][%d]: ", i, j);
-        doublearrayIn[i][j] = scanner.nextDouble();
+        try {
+          doublearrayIn[i][j] = Double.parseDouble(tokens[j]);
+        } catch (NumberFormatException e) {
+          System.out.println("Input tidak valid. Silakan masukkan angka.");
+          i--;
+          break;
+        }
       }
     }
 
     Matrix matrixIn = new Matrix(doublearrayIn);
-
-    // JANGAN tutup scanner karena akan menutup System.in
-    // scanner.close();
     return matrixIn;
   }
 }
