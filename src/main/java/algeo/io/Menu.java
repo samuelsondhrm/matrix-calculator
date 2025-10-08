@@ -1,14 +1,9 @@
 package algeo.io;
 
-import algeo.determinant.CofactorDeterminant;
-import algeo.determinant.RowReductionDeterminant;
-import algeo.inverse.AdjointInverse;
-import algeo.inverse.AugmentInverse;
-import algeo.spl.Cramer;
-import algeo.spl.Gauss;
-import algeo.spl.GaussJordan;
-import algeo.spl.InverseMethod;
+import algeo.determinant.*;
 import algeo.interpolasi.*;
+import algeo.inverse.*;
+import algeo.spl.*;
 import java.util.Scanner;
 
 public class Menu {
@@ -220,17 +215,19 @@ public class Menu {
         globalScanner.nextLine();
         continue;
       }
-
-      if (menu == 1) {
-        Polinomial.polinomial();
-        menu = -1;
-        waitForEnter();
-
-      } else if (menu == 3) {
-        System.out.println("Kembali ke menu utama...");
-        break;
-      } else {
-        System.out.println("Pilihan tidak valid. Silakan pilih 1-3.");
+      switch (menu) {
+        case 1 -> {
+          Polinomial.polinomial();
+          menu = -1;
+          waitForEnter();
+        }
+        case 3 -> {
+          System.out.println("Kembali ke menu utama...");
+          break;
+        }
+        default -> {
+          System.out.println("Pilihan tidak valid. Silakan pilih 1-3.");
+        }
       }
     } while (menu != 3 && menu != -1);
   }
