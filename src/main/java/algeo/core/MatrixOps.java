@@ -3,7 +3,7 @@ package algeo.core;
 public final class MatrixOps {
   private MatrixOps() {} 
 
-    public static final double EPS = 1e-15;
+    public static final double EPS = 1e-21;
   public static Matrix ref(Matrix M) {
     Matrix mCopy = M.copy();
     int rP = 0;
