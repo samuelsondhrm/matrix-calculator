@@ -15,7 +15,6 @@ public class GaussJordan {
     System.setOut(new PrintStream(bos));
 
     int solutionType = JumlahSolusi.cekJumlahSolusiM(M);
-    Matrix mRref = MatrixOps.rref(M);
 
     System.setOut(originalOut);
 
@@ -24,11 +23,12 @@ public class GaussJordan {
 
     } else if (solutionType == 1) {
       System.out.println("Solusi tunggal:");
+      Matrix mRref = MatrixOps.rref(M);
       Gauss.finishSPL(mRref);
 
     } else { // solutionType == 2
-      System.setOut(originalOut);
       System.out.println("Solusi banyak:");
+      Matrix mRref = MatrixOps.rref(M);
       Gauss.finishParametricSPL(mRref);
     }
   }

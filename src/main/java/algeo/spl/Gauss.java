@@ -17,8 +17,7 @@ public class Gauss {
     System.setOut(new PrintStream(bos));
 
     int solutionType = JumlahSolusi.cekJumlahSolusiM(M);
-    Matrix mRef = MatrixOps.ref(M);
-        
+
     System.setOut(originalOut);
 
     if (solutionType == 0) {
@@ -26,14 +25,15 @@ public class Gauss {
 
     } else if (solutionType == 1) {
       System.out.println("Solusi tunggal:");
+      Matrix mRef = MatrixOps.ref(M);
       Gauss.finishSPL(mRef);
 
     } else { // solutionType == 2
-      System.setOut(originalOut);
       System.out.println("Solusi banyak:");
+      Matrix mRef = MatrixOps.ref(M);
       Gauss.finishParametricSPL(mRef);
     }
-     }
+  }
 
   public static void finishSPL(Matrix M) {
     int n = M.cols() - 1;
