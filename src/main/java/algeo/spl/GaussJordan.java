@@ -6,8 +6,19 @@ import algeo.io.*;
 public class GaussJordan {
     public static void gaussjordan() {
     Matrix M = MatrixIO.inputAugmentedMatrix();
-    Matrix mRef = MatrixOps.rref(M);
-    Gauss.finishSPL(mRef);
+
+    int solutionType = JumlahSolusi.cekJumlahSolusiM(M);
+    Matrix mRef = MatrixOps.ref(M);
+
+    if (solutionType == 0) {
+      System.out.println("Tidak ada solusi.");
+    } else if (solutionType == 1) {
+      System.out.println("Solusi tunggal:");
+      Gauss.finishSPL(mRef);
+    } else { // solutionType == 2
+      System.out.println("Solusi banyak:");
+      Gauss.finishParametricSPL(mRef);
+    }
 }
 
   public static void makeReductedEchelon(Matrix M) {
