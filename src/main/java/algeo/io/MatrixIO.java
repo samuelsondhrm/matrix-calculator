@@ -33,7 +33,7 @@ public class MatrixIO {
 
   public static Matrix inputMatrix(Scanner sc) {
     System.out.println("\n== Input Matriks (n x n) ==");
-    int n = askInt(sc, "Masukkan n (1-" + MAX_MANUAL + "):", 1, MAX_MANUAL);
+    int n = askInt(sc, "Masukkan n (1-" + MAX_MANUAL + "): ", 1, MAX_MANUAL);
     double[][] data = readRows(sc, n, n);
     return new Matrix(data);
   }
