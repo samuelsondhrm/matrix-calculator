@@ -7,7 +7,7 @@ import algeo.io.MatrixIO;
 
 public class InverseMethod {
     public static void inverseMethod() {
-        Matrix M = MatrixIO.inputMatrix();
+        Matrix M = MatrixIO.inputAugmentedMatrix();
         solveInverse(M);
     }
 

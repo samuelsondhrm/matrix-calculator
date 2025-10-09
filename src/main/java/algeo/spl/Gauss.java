@@ -2,130 +2,151 @@ package algeo.spl;
 
 import algeo.core.*;
 import algeo.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Gauss {
   public static void gauss() {
-    Matrix M = MatrixIO.inputMatrix();
-    makeEchelon(M);
-    finishSPL(M);
-  }
+    Matrix M = MatrixIO.inputAugmentedMatrix();
 
-  public static void finishSPL(Matrix M) {
-    int n = M.cols() - 1;
-    double[] solution = new double[n];
+    int solutionType = JumlahSolusi.cekJumlahSolusiM(M);
+    Matrix mRef = MatrixOps.ref(M);
 
-    for (int i = n - 1; i >= 0; i--) {
-      double rhs = M.get(i, n);
-
-      StringBuilder equation = new StringBuilder();
-      for (int j = 0; j < n; j++) {
-        double coef = M.get(i, j);
-        if (coef >= MatrixOps.EPS) {
-          if (equation.length() > 0 && coef > 0) {
-            equation.append(" + ");
-          } else if (coef < 0) {
-            equation.append(" - ");
-          }
-
-          if (Math.abs(Math.abs(coef)) != 1.0) {
-            equation.append(NumberFmt.format3(Math.abs(coef)));
-          }
-
-          equation.append("x").append(j + 1);
-        }
-      }
-      equation.append(" = ").append(rhs);
-
-      if (Matrix.sumRows(M, i) != 0) {
-        System.out.println("Persamaan: " + equation.toString());
-      }
-
-      double sum = 0;
-      for (int j = i + 1; j < n; j++) {
-        sum += M.get(i, j) * solution[j];
-      }
-      solution[i] = rhs - sum;
-
-      System.out.println("Solusi: x" + (i + 1) + " = " + NumberFmt.format3(solution[i]) + "\n");
+    if (solutionType == 0) {
+      System.out.println("Tidak ada solusi.");
+    } else if (solutionType == 1) {
+      System.out.println("Solusi tunggal:");
+      finishSPL(mRef);
+    } else { // solutionType == 2
+      System.out.println("Solusi banyak:");
+      finishParametricSPL(mRef);
     }
   }
 
-  public static void makeEchelon(Matrix M) {
-    int rP = 0;
-    int cP = 0;
+ public static void finishSPL(Matrix M) {
+    int n = M.cols() - 1;
+    double[] solution = new double[n];
+
+    System.out.println("\n--- Tahap Substitusi Mundur ---");
+
+    for (int i = n - 1; i >= 0; i--) {
+      double rhs = M.get(i, n);
+      double sum = 0;
+      StringBuilder equation = new StringBuilder();
+
+      for (int j = 0; j < n; j++) {
+        double coef = M.get(i, j);
+        if (Math.abs(coef) > MatrixOps.EPS) {
+          if (equation.length() > 0 && coef > 0) {
+            equation.append(" + ");
+          } else if (equation.length() > 0 && coef < 0) {
+            equation.append(" - ");
+          } else if (coef < 0) {
+            equation.append("-");
+          }
+
+          if (Math.abs(coef) != 1.0) {
+            equation.append(NumberFmt.format3(Math.abs(coef)));
+          }
+          equation.append("x").append(j + 1);
+        }
+      }
+
+      for (int j = i + 1; j < n; j++) {
+        sum += M.get(i, j) * solution[j];
+      }
+      
+      solution[i] = rhs - sum;
+
+      System.out.println("Persamaan: " + equation.toString() + " = " + NumberFmt.format3(rhs));
+      System.out.println("Substitusi: " + "x" + (i + 1) + " = " + NumberFmt.format3(solution[i]) + "\n");
+    }
+
+    for (int i = 0; i < n; i++) {
+        System.out.println("x" + (i + 1) + " = " + NumberFmt.format3(solution[i]));
+    }
+  }
+
+  public static void finishParametricSPL(Matrix M) {
     int rows = M.rows();
     int cols = M.cols();
-
-    while (rP < rows && cP < cols) {
-      System.out.println("\nLangkah " + (rP + 1) + ", memproses Kolom " + (cP + 1));
-
-      if (M.get(rP, cP) == 1.0) {
-        for (int i = rP + 1; i < rows; i++) {
-          double factor = M.get(i, cP);
-          if (factor != 0) {
-            M.addRowMultiple(i, rP, -factor);
-            System.out.println(
-                "Eliminasi baris "
-                    + (i + 1)
-                    + " (R"
-                    + (i + 1)
-                    + " - "
-                    + factor
-                    + "*B"
-                    + (rP + 1)
-                    + "):");
-
-            System.out.println(M);
-          }
+    int n = cols - 1;
+    int paramIndex = 1;
+    
+    List<Integer> nonZeroRows = new ArrayList<>();
+    for (int i = 0; i < rows; i++) {
+        boolean isZeroRow = true;
+        for (int j = 0; j < cols; j++) {
+            if (Math.abs(M.get(i, j)) > MatrixOps.EPS) {
+                isZeroRow = false;
+                break;
+            }
         }
-        rP++;
-        cP++;
-        continue;
-      }
-
-      int i_max = rP;
-      for (int i = rP; i < rows; i++) {
-        if (Math.abs(M.get(i, cP)) > Math.abs(M.get(i_max, cP))) {
-          i_max = i;
+        if (!isZeroRow) {
+            nonZeroRows.add(i);
         }
-      }
+    }
+    
+    List<Integer> dependentVars = new ArrayList<>();
+    List<Integer> freeVars = new ArrayList<>();
+    int rowIdx = 0;
+    for (int colIdx = 0; colIdx < n; colIdx++) {
+        boolean isDependent = false;
+        if (rowIdx < nonZeroRows.size()) {
+            int r = nonZeroRows.get(rowIdx);
+            if (Math.abs(M.get(r, colIdx) - 1.0) < MatrixOps.EPS) {
+                dependentVars.add(colIdx);
+                rowIdx++;
+                isDependent = true;
+            }
+        }
+        if (!isDependent) {
+            freeVars.add(colIdx);
+        }
+    }
 
-      if (M.get(i_max, cP) == 0) {
-        System.out.println("Kolom ini hanya berisi nol. Pindah ke kolom berikutnya.\n");
-        cP++;
-      } else {
-        if (rP != i_max) {
-          M.swapRows(rP, i_max);
-          System.out.println("Tukar baris " + (rP + 1) + " dan " + (i_max + 1) + ":");
-          System.out.println(M);
+    String[] solution = new String[n];
+    for (int i = 0; i < freeVars.size(); i++) {
+        int varIndex = freeVars.get(i);
+        solution[varIndex] = "s" + (paramIndex++);
+    }
+
+    for (int i = dependentVars.size() - 1; i >= 0; i--) {
+        int varIndex = dependentVars.get(i);
+        StringBuilder expr = new StringBuilder();
+        double rhs = M.get(i, n);
+        
+        if (Math.abs(rhs) > MatrixOps.EPS) {
+            expr.append(NumberFmt.format3(rhs));
         }
 
-        double pivotValue = M.get(rP, cP);
-        M.scaleRow(rP, 1.0 / pivotValue);
-        System.out.println(
-            "Bentuk leading one pada baris " + (rP + 1) + "R" + (rP + 1) + "/" + pivotValue);
-        System.out.println(M);
+        for (int j = varIndex + 1; j < n; j++) {
+            double coef = M.get(i, j);
+            if (Math.abs(coef) > MatrixOps.EPS) {
+                if (expr.length() > 0 && coef < 0) {
+                    expr.append(" + ");
+                } else if (expr.length() > 0) {
+                    expr.append(" - ");
+                } else if (coef < 0) {
+                    expr.append("-");
+                }
+                
+                if (Math.abs(coef) != 1.0) {
+                    expr.append(NumberFmt.format3(Math.abs(coef)));
+                }
 
-        for (int i = rP + 1; i < rows; i++) {
-          double factor = M.get(i, cP);
-          if (factor != 0) {
-            M.addRowMultiple(i, rP, -factor);
-            System.out.println(
-                "Eliminasi baris "
-                    + (i + 1)
-                    + " (R"
-                    + (i + 1)
-                    + " - "
-                    + factor
-                    + "*R"
-                    + (rP + 1)
-                    + "):");
-            System.out.println(M);
-          }
+                if (freeVars.contains(j)) {
+                     expr.append(solution[j]);
+                } else {
+                     expr.append("x").append(j + 1);
+                }
+            }
         }
-        rP++;
-        cP++;
-      }
+        solution[varIndex] = expr.toString();
+    }
+
+    for (int i = 0; i < n; i++) {
+        System.out.println("x" + (i + 1) + " = " + solution[i]);
     }
   }
 }

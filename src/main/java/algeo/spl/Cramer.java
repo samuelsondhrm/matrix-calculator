@@ -6,7 +6,7 @@ import algeo.io.*;
 
 public class Cramer {
   public static void cramer() {
-    Matrix M = MatrixIO.inputMatrix();
+    Matrix M = MatrixIO.inputAugmentedMatrix();
     solveCramer(M);
   }
 

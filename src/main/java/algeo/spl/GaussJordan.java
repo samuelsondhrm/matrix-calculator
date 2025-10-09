@@ -5,16 +5,16 @@ import algeo.io.*;
 
 public class GaussJordan {
     public static void gaussjordan() {
-    Matrix M = MatrixIO.inputMatrix();
-    makeReductedEchelon(M);
-    Gauss.finishSPL(M);
+    Matrix M = MatrixIO.inputAugmentedMatrix();
+    Matrix mRef = MatrixOps.rref(M);
+    Gauss.finishSPL(mRef);
 }
 
   public static void makeReductedEchelon(Matrix M) {
     int rows = M.rows();
     int cols = M.cols();
 
-    Gauss.makeEchelon(M);
+    MatrixOps.ref(M);
 
     System.out.println("\n--- Tahap Eliminasi Mundur (Gauss-Jordan) ---");
 

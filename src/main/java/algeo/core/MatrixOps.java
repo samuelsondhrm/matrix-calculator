@@ -1,213 +1,159 @@
 package algeo.core;
 
 public final class MatrixOps {
-  private MatrixOps() {}
+  private MatrixOps() {} 
 
-  /** Epsilon default untuk komputasi numerik. */
-  public static final double EPS = 1e-15;
+    public static final double EPS = 1e-15;
+  public static Matrix ref(Matrix M) {
+    Matrix mCopy = M.copy();
+    int rP = 0;
+    int cP = 0;
+    int rows = mCopy.rows();
+    int cols = mCopy.cols();
 
-  /* ===========  REF  ============= */
+    while (rP < rows && cP < cols) {
+      System.out.println("\nLangkah " + (rP + 1) + ", memproses Kolom " + (cP + 1));
 
-  /**
-   * Ubah matriks menjadi REF (row echelon form) in-place.
-   *
-   * @param m matriks yang akan direduksi (diubah in-place)
-   * @param pivoting true untuk partial pivoting (disarankan), false jika tidak
-   * @param eps toleransi nol numerik
-   * @return jumlah pivot (perkiraan rank setelah REF)
-   */
-  public static int ref(Matrix m, boolean pivoting, double eps) {
-    final int R = m.rows();
-    final int C = m.cols();
-    int r = 0; // baris aktif (tempat menaruh pivot berikutnya)
-    int pivots = 0;
+      if (mCopy.get(rP, cP) == 1.0) {
+        for (int i = rP + 1; i < rows; i++) {
+          double factor = mCopy.get(i, cP);
+          if (factor != 0) {
+            mCopy.addRowMultiple(i, rP, -factor);
+            System.out.println(
+                "Eliminasi baris "
+                    + (i + 1)
+                    + " (R"
+                    + (i + 1)
+                    + " - "
+                    + factor
+                    + "*B"
+                    + (rP + 1)
+                    + "):");
 
-    for (int c = 0; c < C && r < R; c++) {
-      int pivotRow = r;
-      double best = Math.abs(m.get(pivotRow, c));
-
-      if (pivoting) {
-        for (int rr = r + 1; rr < R; rr++) {
-          double v = Math.abs(m.get(rr, c));
-          if (v > best) {
-            best = v;
-            pivotRow = rr;
+            System.out.println(mCopy);
           }
         }
-      }
-
-      // Jika kolom ini ~ nol semua (di bawah baris r), lanjut ke kolom berikut
-      if (best <= eps) continue;
-
-      // Letakkan pivot terbesar di baris r
-      if (pivotRow != r) m.swapRows(pivotRow, r);
-
-      // Eliminasi ke bawah
-      double pivotVal = m.get(r, c);
-      if (Math.abs(pivotVal) <= eps) continue;
-      for (int rr = r + 1; rr < R; rr++) {
-        double factor = m.get(rr, c) / pivotVal;
-        if (Math.abs(factor) <= eps) continue;
-        // rr <- rr - factor * r
-        m.addRowMultiple(rr, r, -factor);
-        m.set(rr, c, 0.0);
-      }
-
-      r++;
-      pivots++;
-    }
-    return pivots;
-  }
-
-  /** Overload dengan EPS default dan pivoting = true. */
-  public static int ref(Matrix m) {
-    return ref(m, true, EPS);
-  }
-
-  /* ========  RREF (Gauss–Jordan) ======= */
-
-  /**
-   * Ubah matriks menjadi RREF (reduced row echelon form) in-place.
-   *
-   * @param m matriks (diubah in-place)
-   * @param pivoting true untuk partial pivoting
-   * @param eps toleransi nol numerik
-   */
-  public static void rref(Matrix m, boolean pivoting, double eps) {
-    final int R = m.rows();
-    final int C = m.cols();
-    int r = 0;
-
-    for (int c = 0; c < C && r < R; c++) {
-      int pivotRow = r;
-      double best = Math.abs(m.get(pivotRow, c));
-
-      if (pivoting) {
-        for (int rr = r + 1; rr < R; rr++) {
-          double v = Math.abs(m.get(rr, c));
-          if (v > best) {
-            best = v;
-            pivotRow = rr;
-          }
-        }
-      }
-
-      if (best <= eps) continue;
-
-      if (pivotRow != r) m.swapRows(pivotRow, r);
-
-      // Normalisasi baris pivot agar pivot = 1
-      double pv = m.get(r, c);
-      if (Math.abs(pv) > eps && Math.abs(pv - 1.0) > eps) {
-        double inv = 1.0 / pv;
-        m.scaleRow(r, inv);
-      }
-      // Koreksi numerik
-      m.set(r, c, 1.0);
-
-      // Nolkan semua entri di kolom pivot selain baris r
-      for (int rr = 0; rr < R; rr++) {
-        if (rr == r) continue;
-        double factor = m.get(rr, c);
-        if (Math.abs(factor) <= eps) continue;
-        m.addRowMultiple(rr, r, -factor);
-        m.set(rr, c, 0.0);
-      }
-
-      r++;
-    }
-  }
-
-  /** Overload RREF default: pivoting = true, eps = EPS. */
-  public static void rref(Matrix m) {
-    rref(m, true, EPS);
-  }
-
-  /* ==========  Rank  ============ */
-
-  /** Hitung rank dengan melakukan REF pada salinan matriks. */
-  public static int rank(Matrix A, boolean pivoting, double eps) {
-    Matrix m = A.copy();
-    return ref(m, pivoting, eps);
-  }
-
-  public static int rank(Matrix A) {
-    return rank(A, true, EPS);
-  }
-
-  /* == Determinan via OBE (row-reduce) == */
-
-  /**
-   * Determinan dengan reduksi baris: - Track pertukaran baris (ubah tanda) - Track skala baris
-   * (jarang diperlukan jika hanya eliminasi r <- r - k*rowPivot) - Hasil = produk diagonal atas
-   * setelah REF dikali faktor tanda.
-   *
-   * <p>Catatan: - Tidak stabil untuk matriks singular ~epsilon; gunakan eps untuk deteksi nol. -
-   * Operasi dilakukan pada salinan agar A tidak berubah.
-   *
-   * @param A matriks
-   * @param pivoting true untuk partial pivoting
-   * @param eps toleransi nol numerik
-   */
-  public static double determinantOBE(Matrix A, boolean pivoting, double eps) {
-    if (!A.isSquare()) {
-      throw new IllegalArgumentException("Determinan hanya untuk matriks persegi.");
-    }
-    Matrix m = A.copy();
-    final int n = m.rows();
-
-    double sign = 1.0; // flip -1 ketika swap baris
-    int r = 0;
-
-    for (int c = 0; c < n && r < n; c++) {
-      // Cari pivot
-      int pivotRow = r;
-      double best = Math.abs(m.get(pivotRow, c));
-      if (pivoting) {
-        for (int rr = r + 1; rr < n; rr++) {
-          double v = Math.abs(m.get(rr, c));
-          if (v > best) {
-            best = v;
-            pivotRow = rr;
-          }
-        }
-      }
-      if (best <= eps) {
-        // Kolom ~ nol, lanjut; ini menurunkan rank -> determinan akan 0
+        rP++;
+        cP++;
         continue;
       }
 
-      if (pivotRow != r) {
-        m.swapRows(pivotRow, r);
-        sign *= -1.0;
+      int i_max = rP;
+      for (int i = rP; i < rows; i++) {
+        if (Math.abs(mCopy.get(i, cP)) > Math.abs(mCopy.get(i_max, cP))) {
+          i_max = i;
+        }
       }
 
-      // Eliminasi ke bawah
-      double pv = m.get(r, c);
-      for (int rr = r + 1; rr < n; rr++) {
-        double factor = m.get(rr, c) / pv;
-        if (Math.abs(factor) <= eps) continue;
-        m.addRowMultiple(rr, r, -factor);
-        m.set(rr, c, 0.0);
+      if (mCopy.get(i_max, cP) == 0) {
+        System.out.println("Kolom ini hanya berisi nol. Pindah ke kolom berikutnya.\n");
+        cP++;
+      } else {
+        if (rP != i_max) {
+          mCopy.swapRows(rP, i_max);
+          System.out.println("Tukar baris " + (rP + 1) + " dan " + (i_max + 1) + ":");
+          System.out.println(mCopy);
+        }
+
+        double pivotValue = mCopy.get(rP, cP);
+        mCopy.scaleRow(rP, 1.0 / pivotValue);
+        System.out.println(
+            "Bentuk leading one pada baris " + (rP + 1) + "R" + (rP + 1) + "/" + pivotValue);
+        System.out.println(mCopy);
+
+        for (int i = rP + 1; i < rows; i++) {
+          double factor = mCopy.get(i, cP);
+          if (factor != 0) {
+            mCopy.addRowMultiple(i, rP, -factor);
+            System.out.println(
+                "Eliminasi baris "
+                    + (i + 1)
+                    + " (R"
+                    + (i + 1)
+                    + " - "
+                    + factor
+                    + "*R"
+                    + (rP + 1)
+                    + "):");
+            System.out.println(mCopy);
+          }
+        }
+        rP++;
+        cP++;
+      }
+    }
+    return mCopy;
+  }
+
+  public static Matrix rref(Matrix M) {
+    int rows = M.rows();
+    int cols = M.cols();
+
+    Matrix mCopy = ref(M);
+
+    System.out.println("\n--- Tahap Eliminasi Mundur (Gauss-Jordan) ---");
+
+    for (int i = rows - 1; i >= 0; i--) {
+      int cP = -1;
+
+      for (int j = 0; j < cols; j++) {
+        if (mCopy.get(i, j) == 1.0) {
+          cP = j;
+          break;
+        }
       }
 
-      r++;
-    }
+      if (cP == -1) {
+        continue;
+      }
 
-    // Jika rank < n → determinan 0
-    if (r < n) return 0.0;
-
-    // Produk diagonal
-    double det = sign;
-    for (int i = 0; i < n; i++) {
-      det *= m.get(i, i);
+      for (int k = i - 1; k >= 0; k--) {
+        double factor = mCopy.get(k, cP);
+        if (factor != 0) {
+          mCopy.addRowMultiple(k, i, -factor);
+          System.out.println(
+              "Eliminasi baris "
+                  + (k + 1)
+                  + " (R"
+                  + (k + 1)
+                  + " - "
+                  + factor
+                  + "*R"
+                  + (i + 1)
+                  + "):");
+          System.out.println(mCopy);
+        }
+      }
     }
-    // Koreksi -0
-    if (Math.abs(det) < eps) det = 0.0;
-    return det;
+        return mCopy;
   }
 
-  public static double determinantOBE(Matrix A) {
-    return determinantOBE(A, true, EPS);
+  public static int cekRank(Matrix A) {
+    if (A == null) {
+      return 0;
+    }
+
+    Matrix M = ref(A);
+
+    int rows = M.rows();
+    int cols = M.cols();
+    int barisTidakNol = 0;
+
+    for (int i = 0; i < rows; i++) {
+      boolean isZeroRow = true;
+      for (int j = 0; j < cols; j++) {
+        if (Math.abs(M.get(i, j)) > EPS) {
+          isZeroRow = false;
+          break;
+        }
+      }
+      if (!isZeroRow) {
+        barisTidakNol++;
+      }
+    }
+    return barisTidakNol;
   }
+
+
+
 }
