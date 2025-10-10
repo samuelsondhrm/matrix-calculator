@@ -60,13 +60,11 @@ public class Polinomial {
           }
 
           double absCoeff = Math.abs(coeff);
-          if (i == 0) {
-            polynomial.append(NumberFmt.format3(absCoeff));
-          } else if (i == 1) {
-            polynomial.append(NumberFmt.format3(absCoeff)).append("x");
-          } else {
-            polynomial.append(NumberFmt.format3(absCoeff)).append("x^").append(i);
-          }
+            switch (i) {
+                case 0 -> polynomial.append(NumberFmt.format3(absCoeff));
+                case 1 -> polynomial.append(NumberFmt.format3(absCoeff)).append("x");
+                default -> polynomial.append(NumberFmt.format3(absCoeff)).append("x^").append(i);
+            }
         }
       }
 
@@ -106,8 +104,7 @@ public class Polinomial {
     double[][] data = new double[n][2];
 
     System.out.println(
-        "Masukkan titik sampel dalam format 'x y' (dipisahkan spasi dan tekan ENTER setiap"
-            + " barisnya");
+        "Masukkan titik sampel dalam format 'x y' (dipisahkan spasi dan tekan ENTER setiap barisnya");
     scanner.nextLine();
 
     for (int i = 0; i < n; i++) {
@@ -126,7 +123,6 @@ public class Polinomial {
       } catch (NumberFormatException e) {
         System.out.println("Input tidak valid. Harap masukkan angka.");
         i--;
-        continue;
       }
     }
 
