@@ -45,6 +45,7 @@ public class Cramer {
     }
 
     double detA = CofactorDeterminant.of(A);
+    double[] solution = new double[rows];
 
     for (int j = 0; j < rows; j++) {
       Matrix Aj = A.copy();
@@ -55,8 +56,14 @@ public class Cramer {
       double detAj = CofactorDeterminant.of(Aj);
 
       double xj = detAj / detA;
+      solution[j] = xj;
 
       System.out.println("Solusi: x" + (j + 1) + " = " + NumberFmt.format3(xj));
+    }
+    
+    System.out.println("Hasil Aturan Cramer");
+    for (int i = 0; i < rows; i++) {
+      System.out.println("Solusi: x" + (i + 1) + " = " + NumberFmt.format3(solution[i]));
     }
   }
 }
