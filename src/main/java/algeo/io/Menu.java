@@ -39,7 +39,8 @@ public class Menu {
   }
 
   public static void choice() {
-    int menu = -9999;
+    int menu;
+    boolean in = true;
 
     do {
       menu();
@@ -55,39 +56,51 @@ public class Menu {
       switch (menu) {
         case 1 -> {
           splIO();
-          menu = -1;
           waitForEnter();
         }
         case 2 -> {
           determinanIO();
-          menu = -1;
           waitForEnter();
         }
         case 3 -> {
           inverseIO();
-          menu = -1;
           waitForEnter();
         }
         case 4 -> {
           interpolasiIO();
-          menu = -1;
           waitForEnter();
         }
         case 5 -> {
           regresiPolinomialBergandaIO();
-          menu = -1;
           waitForEnter();
         }
         case 6 -> {
-          System.out.print("\nTekan ENTER untuk kembali ke menu...");
           globalScanner.nextLine();
-          globalScanner.nextLine();
+          in = askOut();
+          
         }
         default -> System.out.println("Pilihan tidak valid. Silakan pilih 1-6.");
       }
 
-    } while (menu != 6);
+    } while (in);
+    cleanup();
   }
+
+  private static boolean askOut() {
+        while (true) {
+            System.out.print("Apakah Anda benar-benar ingin keluar? (y/n): ");
+            String t = globalScanner.nextLine().trim().toLowerCase();
+            if (t.equals("n")) {
+              System.out.println("Kembali ke menu utama...");
+              return true;
+            }
+            if (t.equals("y")) {
+              System.out.println("Terima kasih telah menggunakan KALIN : Kalkulator Aljabar Linear AZZEEEK!");
+              return false;
+            }
+            System.out.println("Input tidak valid. Harap masukkan 'y' atau 'n'.");
+        }
+    }
 
   public static void splIO() {
 
@@ -239,7 +252,6 @@ public class Menu {
           waitForEnter();
         }
         case 3 -> {
-          System.out.println("Kembali ke menu utama...");
           waitForEnter();
           break;
         }
@@ -257,7 +269,7 @@ public class Menu {
   }
 
   public static void waitForEnter() {
-    System.out.println("Tekan ENTER untuk melanjutkan program");
+    System.out.println("Tekan ENTER untuk kembali ke Menu Utama.");
     globalScanner.nextLine();
   }
 
