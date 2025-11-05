@@ -1,0 +1,279 @@
+package algeo.io;
+
+import java.util.Scanner;
+
+import algeo.determinant.CofactorDeterminant;
+import algeo.determinant.RowReductionDeterminant;
+import algeo.interpolasi.BezierSpline;
+import algeo.interpolasi.Polinomial;
+import algeo.inverse.AdjointInverse;
+import algeo.inverse.AugmentInverse;
+import algeo.regression.MultivariatePolynomialRegression;
+import algeo.spl.Cramer;
+import algeo.spl.Gauss;
+import algeo.spl.GaussJordan;
+import algeo.spl.InverseMethod;
+
+public class Menu {
+  private static final Scanner globalScanner = new Scanner(System.in);
+  
+  public static void menu() {
+    System.out.println("██╗  ██╗  █████╗  ██╗     ██╗ ███╗   ██╗");
+    System.out.println("██║ ██╔╝ ██╔══██╗ ██║     ██║ ████╗  ██║");
+    System.out.println("█████╔╝  ███████║ ██║     ██║ ██╔██╗ ██║");
+    System.out.println("██╔═██╗  ██╔══██║ ██║     ██║ ██║╚██╗██║");
+    System.out.println("██║  ██╗ ██║  ██║ ███████╗██║ ██║ ╚████║");
+    System.out.println("╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚══════ ╚═╝ ╚═╝  ╚═══╝");
+    System.out.println("----------------------------------------");
+    System.out.println("Kalkulator Matrix Aljabar Linear AZZEEEK");
+
+    System.out.println("Modul Kalkulator yang dapat digunakan!");
+    System.out.println("---------------------------------------------");
+    System.out.println("1.  Sistem Persamaan Linear");
+    System.out.println("2.  Determinan");
+    System.out.println("3.  Matriks Balikan");
+    System.out.println("4.  Interpolasi");
+    System.out.println("5.  Regresi Polinomial Berganda");
+    System.out.println("6.  Keluar");
+    System.out.println("---------------------------------------------");
+  }
+
+  public static void choice() {
+    int menu;
+    boolean in = true;
+
+    do {
+      menu();
+      System.out.print("\nSilakan pilih operasi yang ingin Anda lakukan: ");
+      try {
+        menu = globalScanner.nextInt();
+      } catch (Exception e) {
+        System.out.println("Input tidak valid. Silakan masukkan angka.");
+        globalScanner.nextLine();
+        continue;
+      }
+
+      switch (menu) {
+        case 1 -> {
+          splIO();
+          waitForEnter();
+        }
+        case 2 -> {
+          determinanIO();
+          waitForEnter();
+        }
+        case 3 -> {
+          inverseIO();
+          waitForEnter();
+        }
+        case 4 -> {
+          interpolasiIO();
+          waitForEnter();
+        }
+        case 5 -> {
+          regresiPolinomialBergandaIO();
+          waitForEnter();
+        }
+        case 6 -> {
+          globalScanner.nextLine();
+          in = askOut();
+          
+        }
+        default -> System.out.println("Pilihan tidak valid. Silakan pilih 1-6.");
+      }
+
+    } while (in);
+    cleanup();
+  }
+
+  private static boolean askOut() {
+        while (true) {
+            System.out.print("Apakah Anda benar-benar ingin keluar? (y/n): ");
+            String t = globalScanner.nextLine().trim().toLowerCase();
+            if (t.equals("n")) {
+              System.out.println("Kembali ke menu utama...");
+              return true;
+            }
+            if (t.equals("y")) {
+              System.out.println("Terima kasih telah menggunakan KALIN : Kalkulator Aljabar Linear AZZEEEK!");
+              return false;
+            }
+            System.out.println("Input tidak valid. Harap masukkan 'y' atau 'n'.");
+        }
+    }
+
+  public static void splIO() {
+
+    int menu = -9999;
+
+    do {
+      System.out.println("Metode SPL yang dapat dipilih");
+      System.out.println("---------------------------------------------");
+      System.out.println("1.  Eliminasi Gauss");
+      System.out.println("2.  Eliminasi Gauss-Jordan");
+      System.out.println("3.  Kaidah Cramer");
+      System.out.println("4.  Metode Matriks Balikan");
+      System.out.println("5.  Keluar");
+      System.out.println("---------------------------------------------");
+      System.out.print("\nSilakan pilih metode operasi yang ingin Anda lakukan: ");
+
+      try {
+        menu = globalScanner.nextInt();
+      } catch (Exception e) {
+        System.out.println("Input tidak valid. Silakan masukkan angka.");
+        globalScanner.nextLine();
+        continue;
+      }
+
+      switch (menu) {
+        case 1 -> {
+          Gauss.gauss();
+          menu = -1;
+          waitForEnter();
+        }
+        case 2 -> {
+          GaussJordan.gaussjordan();
+          menu = -1;
+          waitForEnter();
+        }
+        case 3 -> {
+          Cramer.cramer();
+          menu = -1;
+          waitForEnter();
+        }
+        case 4 -> InverseMethod.inverseMethod();
+        case 5 -> System.out.println("Kembali ke menu utama...");
+        default -> System.out.println("Pilihan tidak valid. Silakan pilih 1-5.");
+      }
+
+    } while (menu != 5 && menu != -1);
+  }
+
+  public static void determinanIO() {
+    int menu = -9999;
+    do {
+      System.out.println("Metode Determinan yang dapat dipilih");
+      System.out.println("---------------------------------------------");
+      System.out.println("1.  Matriks Kofaktor ");
+      System.out.println("2.  OBE");
+      System.out.println("3.  Keluar");
+      System.out.println("---------------------------------------------");
+      System.out.print("\nSilakan pilih metode operasi yang ingin Anda lakukan: ");
+
+      try {
+        menu = globalScanner.nextInt();
+      } catch (Exception e) {
+        System.out.println("Input tidak valid. Silakan masukkan angka.");
+        globalScanner.nextLine();
+        continue;
+      }
+
+      switch (menu) {
+        case 1 -> {
+          CofactorDeterminant.run();
+          menu = -1;
+          waitForEnter();
+        }
+        case 2 -> {
+          RowReductionDeterminant.run();
+          menu = -1;
+          waitForEnter();
+        }
+        case 3 -> System.out.println("Kembali ke menu utama...");
+        default -> System.out.println("Pilihan tidak valid. Silakan pilih 1-3.");
+      }
+
+    } while (menu != 3 && menu != -1);
+  }
+
+  public static void inverseIO() {
+    int menu = -9999;
+    do {
+      System.out.println("Metode Matriks Balikan yang dapat dipilih");
+      System.out.println("---------------------------------------------");
+      System.out.println("1.  Augment + RREF");
+      System.out.println("2.  Adjoint / Adjoin");
+      System.out.println("3.  Keluar");
+      System.out.println("---------------------------------------------");
+      System.out.print("\nSilakan pilih metode operasi yang ingin Anda lakukan: ");
+
+      try {
+        menu = globalScanner.nextInt();
+      } catch (Exception e) {
+        System.out.println("Input tidak valid. Silakan masukkan angka.");
+        globalScanner.nextLine();
+        continue;
+      }
+
+      switch (menu) {
+        case 1 -> {
+          AugmentInverse.run();
+          menu = -1;
+          waitForEnter();
+        }
+        case 2 -> {
+          AdjointInverse.run();
+          menu = -1;
+          waitForEnter();
+        }
+        case 3 -> System.out.println("Kembali ke menu utama...");
+        default -> System.out.println("Pilihan tidak valid. Silakan pilih 1-3.");
+      }
+    } while (menu != 3 && menu != -1);
+  }
+
+  public static void interpolasiIO() {
+    int menu = -9999;
+    do {
+      System.out.println("Metode Interpolasi yang dapat dipilih");
+      System.out.println("---------------------------------------------");
+      System.out.println("1.  Interpolasi Polinomial");
+      System.out.println("2.  Interpolasi splina Bezier kubik");
+      System.out.println("3.  Keluar");
+      System.out.println("---------------------------------------------");
+      System.out.print("\nSilakan pilih metode operasi yang ingin Anda lakukan: ");
+
+      try {
+        menu = globalScanner.nextInt();
+      } catch (Exception e) {
+        System.out.println("Input tidak valid. Silakan masukkan angka.");
+        globalScanner.nextLine();
+        continue;
+      }
+      switch (menu) {
+        case 1 -> {
+          Polinomial.polinomial();
+          menu = -1;
+          waitForEnter();
+        }
+        case 2 -> { 
+          BezierSpline.cubicBezierSpline(); 
+          menu = -1;
+          waitForEnter();
+        }
+        case 3 -> {
+          waitForEnter();
+          break;
+        }
+        default -> {
+          System.out.println("Pilihan tidak valid. Silakan pilih 1-3.");
+          waitForEnter();
+        }
+      }
+    } while (menu != 3 && menu != -1);
+  }
+
+  public static void regresiPolinomialBergandaIO() {
+    globalScanner.nextLine();
+    MultivariatePolynomialRegression.run(globalScanner);
+  }
+
+  public static void waitForEnter() {
+    System.out.println("Tekan ENTER untuk kembali ke Menu Utama.");
+    globalScanner.nextLine();
+  }
+
+  public static void cleanup() {
+    if (globalScanner != null) globalScanner.close();
+  }
+}
