@@ -1,94 +1,81 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/M53Bs6Dv)
-# Aljabar Linier dan Geometri Tubes 1 Template
+# Matrix Calculator - Linear Algebra and Geometry Course Project
 
-## About this template
+## Short Description
+This project is a CLI-based **Matrix Calculator** implementation for the Linear Algebra and Geometry Course (Tugas Besar 1) 2025/2026. Built using **Java 21** and **Maven**, it provides various matrix operations, system of linear equations solvers, as well as interpolation and regression applications.
 
-This template is the starter file structure for Tubes 1 Algeo 2025/2026. This template is a Java project using Maven Build tool with JavaFX GUI already configured in pom.xml.
+## Features & Implementation
+Based on the source code, this application includes the following features:
 
-In this project, you can choose if you want to develop to CLI or GUI app. The default is CLI, if you want GUI do uncomment the necessary part in App.java to run the template GUI test then run the commands below to run the app.
+### 1. System of Linear Equations (SLE)
+Solves `Ax = b` using:
+- Gaussian Elimination
+- Gauss-Jordan Elimination
+- Inverse Matrix Method
+- Cramer's Rule
 
-## Requirements
+### 2. Determinant
+Calculates matrix determinant using:
+- Row Reduction Method
+- Cofactor Expansion Method
 
-Before building and running the **Matrix Calculator**, make sure you have the following installed:
+### 3. Inverse Matrix
+Finds the inverse of a matrix using:
+- Adjoint Method
+- Identity Matrix Method (Augmented Matrix / Gauss-Jordan)
 
-### Java
-- **Version:** 17 or higher
-- **Download links:**
-  - [Oracle JDK 17](https://www.oracle.com/java/technologies/downloads)
+### 4. Matrix Applications
+- **Polynomial Interpolation**: Estimates polynomial functions from data points.
+- **Bicubic / Spline Interpolation**: Implementation of Bezier curves (`BezierSpline`).
+- **Multiple Linear Regression**: Determines multivariate polynomial regression models (`MultivariatePolynomialRegression`).
 
-### Maven
-- **Version:** 3.2.5 or higher (recommended 3.6.3+)
-- **Download links:**
-  - [Direct Apache Maven Official Downloads](https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.zip)
+### 5. Input/Output
+- Supports standard keyboard input (CLI).
+- Reads matrices from `.txt` files.
+- Saves calculation results to output files.
 
-### Additional installation info
+## Code Structure
+The source code is organized modularly within the `algeo` package:
 
-### Windows
-For maven installation, download the .zip and it should contain a directory with
-```
-apache-maven-<version>/
-├── bin/               <-- executable scripts (mvn, mvn.cmd)
-├── boot/         
-├── conf/          
-├── lib/          
-├── NOTICE
-├── LICENSE
-├── README.txt
-```
-
-Put bin/ in environment PATH to use in terminal. [Add folder to PATH tutorial](https://www.youtube.com/watch?v=pGRw1bgb1gU)
-
-### Linux
-```bash
-sudo apt update
-sudo apt install openjdk-21-jdk -y
-sudo apt install maven -y
-```
-
-### MacOS
-```bash
-brew install openjdk@21
-brew install maven
-```
-
-## How to develop
-
-Using maven, the root development directory is `src/main/java/algeo`
-There should not be any coding outside of that directory other than `test` using JUnit or other libraries.
-
-Inside `src/main/java/algeo`, develop modules that are modular to use in the main program (`App.java`)
-
-When running `mvn exec:java` later, `App.java` main program will be the one that is run.
-
-## How to run
-1. Compiling the program
-The following command will produce a `target` directory with `matrix-calculator-1.0-SNAPSHOT.jar` in it
-```bash
-mvn clean package
+```text
+src/main/java/algeo/
+├── App.java                    # Entry point (Main Class)
+├── core/                       # Basic data structures
+│   ├── Matrix.java             # Matrix object class
+│   ├── MatrixOps.java          # Basic operations (add, subtract, multiply, transpose)
+│   └── NumberFmt.java          # Number formatter
+├── spl/                        # SLE algorithms (Gauss, GaussJordan, Cramer, etc.)
+├── determinant/                # Determinant algorithms (Cofactor, RowReduction)
+├── inverse/                    # Inverse algorithms (Adjoint, Augment)
+├── interpolasi/                # Interpolation logic (Polynomial, BezierSpline)
+├── regression/                 # Regression logic (MultivariatePolynomialRegression)
+└── io/                         # Input/Output management & Menu Interface
 ```
 
-alternatively, if you don't want to make a .jar file, you can use
+## System Requirements
+As configured in `pom.xml`, ensure you have the following installed:
+
+* **Java Development Kit (JDK):** Version **21** or later.
+* **Apache Maven:** Version **3.9.x** or later.
+
+## How to Run
+
+### 1. Compilation
+Navigate to the project root directory (where `pom.xml` is located) and run:
+
 ```bash
 mvn clean compile
 ```
 
-2. Running the program
-To run CLI, run:
+### 2. Running the Application
+The application runs in CLI mode. Execute the following command:
 ```bash
 mvn exec:java
 ```
+Once running, an interactive menu will appear in the terminal to guide you through the operations.
 
-To run GUI, be sure to uncomment the main GUI and run:
+### 3. Packaging (Optional)
+If you wish to build an executable .jar file for distribution:
 ```bash
-mvn clean javafx:run
+mvn clean package
 ```
-
-when the program is first run, it should print in terminal:
-```bash
-Hai 
-Halo Algeo!
-```
-
-## Using the program as a library
-
-Copy the .jar file that is in the `target` file (from running `mvn clean compile`) to `bin` for submission, this .jar file can be used in other projects to import modules in this current project
+The jar file will be available in the target/matrix-calculator-1.0-SNAPSHOT.jar directory.
